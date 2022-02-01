@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { UsuarioModel } from '../../models/usuario.model';
+import { AuthService } from '../../services/auth.service';
 
 
 @Component({
@@ -11,7 +12,7 @@ import { UsuarioModel } from '../../models/usuario.model';
 export class LoginComponent implements OnInit {
 
   usuario:UsuarioModel = new UsuarioModel("","","");
-  constructor() { }
+  constructor(private auth:AuthService) { }
 
   ngOnInit(): void {
     
@@ -22,7 +23,11 @@ export class LoginComponent implements OnInit {
     {
       return;
     }
-    console.log(form);
+   this.auth.login(this.usuario).subscribe(data=>{
+     console.log(data);
+   },error=>{
+     console.log(error);
+   });
   }
 
 }

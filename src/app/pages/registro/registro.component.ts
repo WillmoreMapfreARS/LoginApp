@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { UsuarioModel } from '../../models/usuario.model';
+import { AuthService } from '../../services/auth.service';
 @Component({
   selector: 'app-registro',
   templateUrl: './registro.component.html',
@@ -8,7 +9,7 @@ import { UsuarioModel } from '../../models/usuario.model';
 })
 export class RegistroComponent implements OnInit {
   usuario:UsuarioModel = new UsuarioModel("","","");
-  constructor() { }
+  constructor(private auth:AuthService) { }
 
   ngOnInit(): void {
     this.usuario.email="mwlordv@gmail.com";
@@ -19,7 +20,11 @@ export class RegistroComponent implements OnInit {
     {
       return;
     }
-    console.log(formulario);
+    this.auth.nuevoUsuario(this.usuario).subscribe(data=>{
+      console.log(data);
+    },error=>{
+      console.log(error);
+    });
   }
 
 }
