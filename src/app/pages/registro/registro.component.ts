@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
 import { UsuarioModel } from '../../models/usuario.model';
 import { AuthService } from '../../services/auth.service';
 @Component({
@@ -9,10 +11,11 @@ import { AuthService } from '../../services/auth.service';
 })
 export class RegistroComponent implements OnInit {
   usuario:UsuarioModel = new UsuarioModel("","","");
-  constructor(private auth:AuthService) { }
+  recurdarme=false;
+  constructor(private auth:AuthService, private router:Router) { }
 
   ngOnInit(): void {
-    this.usuario.email="mwlordv@gmail.com";
+    
   }
 
   onSubmit(formulario:NgForm){
@@ -20,10 +23,31 @@ export class RegistroComponent implements OnInit {
     {
       return;
     }
-    this.auth.nuevoUsuario(this.usuario).subscribe(data=>{
-      console.log(data);
+    
+    Swal.fire({
+      title:"Favor espere",
+      text:"Espere..",
+      icon: 'info',
+    })
+    Swal.showLoading();
+    this.auth.nuevoUsuario(this.usuario).subscribe((data :any)=>{
+      this.auth.guardarToken(data.idToken);
+      Swal.fire({
+        title:"Usuario Registrado",
+        text:"Usuario Regstrado exitosamente",
+        icon: 'success',
+      })
+      if(this.recurdarme)
+      {
+        localStorage.setItem("email",this.usuario.email);
+      }
+      this.router.navigateByUrl("/home");
     },error=>{
-      console.log(error);
+      Swal.fire({
+        title:"Usuario Registrado",
+        text: error.error.error.message,
+        icon: 'error',
+      })
     });
   }
 
